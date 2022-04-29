@@ -96,3 +96,23 @@ quantile(fichero_salida$Edad, probs = 3/4)
 max(fichero_salida$Edad) - min(fichero_salida$Edad)
 
 IQR(fichero_salida$Edad)
+
+# media intervalos
+marcas.clase <- CalcularMarcasClase(intervalos.GE[[1]])
+media.GE <- CalcularMedia(marcas.clase, vector.fr.GE)
+
+# calcula las marcas de clase de los intervalos
+CalcularMarcasClase <- function(v){
+  mc <- c()
+  for (i in 1:(length(v) - 1))
+    mc <- c(mc, (v[i] + v[i + 1]) / 2)
+  return(mc)
+}
+
+# calcula la media (cuando hay intervalos)
+CalcularMedia <- function(mc, fr) {
+  media <- 0
+  for (i in 1:length(fr))
+    media <- media + (mc[i] * fr[i])
+  return(media)
+}

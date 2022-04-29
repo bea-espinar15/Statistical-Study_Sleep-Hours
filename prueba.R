@@ -54,6 +54,11 @@ ObtenerTibbleFR <- function(vec, tib) {
   return(tib)
 }
 
+# calcula la moda (paramétro = vector)
+CalcularModa <- function(v) {
+  which.max(tabulate(v))
+}
+
 # --------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------
 
@@ -110,7 +115,7 @@ tabla.freq.NEH <- bind_cols(NEH.aux[1], freq.NEH.aux)
 # creamos intervalos y frecuencias abs
 vector.GE <- ObtenerVector(gasto.ed)
 intervalos <- c(0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000, 30000, 55000)
-intervalos.GE <- hist(vector.GE, breaks = intervalos, include.lowest = TRUE, right = TRUE, plot = FALSE)
+intervalos.GE <- hist(vector.GE, breaks = intervalos, include.lowest = TRUE, right = TRUE, plot = TRUE)
 intervalos.GE <- intervalos.GE[1:2]
 
 # metemos los datos en la tabla
@@ -138,3 +143,42 @@ freq.rel.acc.GE <- rename(freq.rel.acc.GE, f.r.a. = f.r.)
 
 # terminamos tabla de frecuencias
 tabla.freq.GE <- bind_cols(tabla.freq.GE, freq.abs.acc.GE, freq.rel.GE, freq.rel.acc.GE)
+
+# MEDIDAS DE POSICIÓN NEH
+
+# pasamos la variable a vector
+vector.NEH <- ObtenerVector(num.est.hogar)
+
+# media NEH
+media.NEH <- mean(vector.NEH)
+
+# mediana NEH (percentil 50%)
+mediana.NEH <- median(vector.NEH)
+
+# moda NEH
+moda.NEH <- CalcularModa(vector.NEH)
+
+# percentil 25% NEH
+perc25.NEH <- quantile(vector.NEH, probs = 1/4)
+
+# percentil 75% NEH
+perc75.NEH <- quantile(vector.NEH, probs = 3/4)
+
+# MEDIDAS DE POSICIÓN GE
+
+# media GE
+media.GE <- mean(vector.GE)
+
+# mediana GE (percentil 50%)
+mediana.GE <- median(vector.GE)
+
+# intervalo modal GE
+max.freq.abs.GE <- max(vector.fa.GE)
+intervalo.modal.GE <- tabla.freq.GE %>% select(1) %>% filter(tabla.freq.GE[2] == max.freq.abs.GE)
+intervalo.modal.GE <- rename(intervalo.modal.GE, Moda = GE)
+
+# percentil 25% GE
+perc25.GE <- quantile(vector.GE, probs = 1/4)
+
+# percentil 75% GE
+perc75.GE <- quantile(vector.GE, probs = 3/4)
