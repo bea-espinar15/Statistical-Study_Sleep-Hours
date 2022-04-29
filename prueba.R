@@ -16,7 +16,6 @@ library(fdth)
 library(psych)
 
 # FUNCIONES
-# hola
 
 # devuelve un vector con el contenido de un tibble
 ObtenerVector <- function(tib) {
