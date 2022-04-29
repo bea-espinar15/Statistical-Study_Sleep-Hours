@@ -1,0 +1,125 @@
+# para leer el fichero de datos hay que ejecutar MD_EGHE_2019.R
+# esto generará un data frame
+
+# instalar packages
+install.packages("dplyr")
+install.packages("janitor")
+install.packages("ggplot2")
+install.packages("fdth")
+  
+# librerías
+library(dplyr)
+library(janitor)
+library(ggplot2)
+library(fdth)
+
+# FUNCIONES
+
+# (AUX) muestra todas las variables
+MostrarVariables <- function() {
+  
+  class(num.est.hogar)
+  num.est.hogar
+  
+  class(gasto.ed)
+  gasto.ed
+  
+  class(n.total)
+  n.total
+  
+  class(freq.abs.NEH)
+  freq.abs.NEH
+  
+  class(freq.rel.NEH)
+  freq.rel.NEH
+  
+  class(freq.abs.acc.NEH)
+  freq.abs.acc.NEH
+  
+  class(freq.rel.acc.NEH)
+  freq.rel.acc.NEH
+  
+  class(tabla.freq.NEH)
+  tabla.freq.NEH
+  
+}
+
+# ----------------------------------------------------------------
+
+# declaramos variable del dataframe
+datos <- fichero_salida
+
+# rm todas las col exc la 5 y la 57 y las filas que sean NA
+datos <- datos %>% select(5,57) %>% filter(!is.na(EHOGAR) & !is.na(GTT))
+
+# separamos en dos variables
+num.est.hogar <- datos %>% select(1)
+gasto.ed <- datos %>% select(2)
+
+# pasamos num.est.hogar de char a numeric
+num.est.hogar$NEH <- as.numeric(num.est.hogar$EHOGAR)
+num.est.hogar <- num.est.hogar %>% select(2)
+
+# número de datos del fichero
+n.total <- count(datos)
+
+
+# EMPEZAMOS CON NUM.EST.HOGAR
+
+# frecuencias abs num.est.hogar
+freq.abs.NEH <- table(num.est.hogar)
+
+# frecuencias rel num.est.hogar
+freq.rel.NEH <- prop.table(freq.abs.NEH)
+
+# pasamos a tibble
+freq.abs.NEH <- as_tibble(freq.abs.NEH)
+freq.abs.NEH <- rename(freq.abs.NEH, NEH = num.est.hogar, f.a. = n)
+freq.rel.NEH <- as_tibble(freq.rel.NEH)
+freq.rel.NEH <- rename(freq.rel.NEH, NEH = num.est.hogar, f.r. = n)
+
+# frecuencias acumuladas
+freq.abs.acc.NEH <- cumsum(freq.abs.NEH[2])
+freq.abs.acc.NEH <- rename(freq.abs.acc.NEH, f.a.a. = f.a.)
+freq.rel.acc.NEH <- cumsum(freq.rel.NEH[2])
+freq.rel.acc.NEH <- rename(freq.rel.acc.NEH, f.r.a. = f.r.)
+
+# creamos tabla de frecuencias
+
+NEH.aux <- num.est.hogar %>% group_by(NEH) %>% summarise(aux = 0)
+freq.NEH.aux <- bind_cols(freq.abs.NEH[2], freq.abs.acc.NEH, freq.rel.NEH[2], freq.rel.acc.NEH)
+tabla.freq.NEH <- bind_cols(NEH.aux[1], freq.NEH.aux)
+
+
+
+
+# POR SI ACASO
+
+# calcula f.r.a.
+CalcularAcumulada <- function(frecuencias) {
+  
+  frecuencias <- c(frecuencias[2])
+  # primera frecuencia acumulada
+  acc <- c(frecuencias[1])
+  # calculamos el resto de frecuencias
+  for (i in 2:length(frecuencias)){
+    acc <- c(frecuencias[i] + frecuencias[i - 1])
+  }
+  return(acc)
+  
+}
+
+# frecuencias abs num.est.hogar
+freq.abs.NEH <- num.est.hogar %>% group_by(NEH) %>% summarise(f.a. = n())
+# frecuencias rel num.est.hogar
+freq.rel.NEH <- num.est.hogar %>% group_by(NEH) %>% summarise(f.r. = EspecificarDecimal(n() / n.total, 9))
+
+# quedarte sólo con las columnas que sean números
+aux <- freq.rel.NEH |> select(where(is.numeric))
+
+# añadir totales (param = 1 si sólo col, param = 2 si sólo fila)
+freq.abs.NEH <- addmargins(freq.abs.NEH)
+freq.rel.NEH <- addmargins(freq.rel.NEH)
+
+# devuelve el número x con k decimales
+EspecificarDecimal <- function(x, k) round(x, k)
