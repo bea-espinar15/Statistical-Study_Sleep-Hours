@@ -80,3 +80,19 @@ freq.rel.acc.GE <- rename(freq.rel.acc.GE, f.r.a. = f.r.)
 GE.aux <- gasto.ed %>% group_by(GE) %>% summarise(aux = 0)
 freq.GE.aux <- bind_cols(freq.abs.GE[2], freq.abs.acc.GE, freq.rel.GE[2], freq.rel.acc.GE)
 tabla.freq.GE <- bind_cols(GE.aux[1], freq.GE.aux)
+
+
+mean(fichero_salida$Edad)
+
+median(fichero_salida$Edad)
+
+mode<-function(x){which.max(tabulate(x))}
+mode(fichero_salida$Edad)
+
+quantile(fichero_salida$Edad, probs = 1/4)
+
+quantile(fichero_salida$Edad, probs = 3/4)
+
+max(fichero_salida$Edad) - min(fichero_salida$Edad)
+
+IQR(fichero_salida$Edad)
