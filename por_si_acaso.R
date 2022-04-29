@@ -116,3 +116,9 @@ CalcularMedia <- function(mc, fr) {
     media <- media + (mc[i] * fr[i])
   return(media)
 }
+
+coef_var <- function(x, na.rm = FALSE) {
+  sd(x, na.rm=na.rm) / mean(x, na.rm=na.rm)
+}
+
+coef_var(x=w, na.rm=T)

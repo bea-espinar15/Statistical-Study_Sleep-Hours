@@ -7,6 +7,7 @@ install.packages("janitor")
 install.packages("ggplot2")
 install.packages("fdth")
 install.packages("psych")
+install.packages("moments")
   
 # librerías
 library(dplyr)
@@ -14,6 +15,7 @@ library(janitor)
 library(ggplot2)
 library(fdth)
 library(psych)
+library(moments)
 
 # FUNCIONES
 
@@ -57,6 +59,16 @@ ObtenerTibbleFR <- function(vec, tib) {
 # calcula la moda (paramétro = vector)
 CalcularModa <- function(v) {
   which.max(tabulate(v))
+}
+
+# calcula el coeficiente de variación
+CalcularCoefVar <- function(desv.tip, media) {
+  return(desv.tip / media)
+}
+
+# calcula la cuasivarianza
+CalcularCuasivar <- function(var) {
+  return(var * n.total / (n.total - 1))
 }
 
 # --------------------------------------------------------------------------------
@@ -182,3 +194,53 @@ perc25.GE <- quantile(vector.GE, probs = 1/4)
 
 # percentil 75% GE
 perc75.GE <- quantile(vector.GE, probs = 3/4)
+
+# MEDIDAS DE DISPERSIÓN NEH
+
+# varianza NEH
+var.NEH <- var(vector.NEH)
+
+# cuasivarianza NEH
+cuasivar.NEH <- CalcularCuasivar(var.NEH)
+
+# desviación típica NEH
+desv.tip.NEH <- sd(vector.NEH)
+
+# cuasidesviación típica NEH
+cuasidesv.tip.NEH <- sqrt(cuasivar.NEH)
+
+# coeficiente de variación NEH
+coef.var.NEH <- CalcularCoefVar(desv.tip.NEH, media.NEH)
+
+# MEDIDAS DE DISPERSIÓN GE
+
+# varianza GE
+var.GE <- var
+
+# cuasivarianza GE
+cuasivar.GE <- CalcularCuasivar(var.GE)
+
+# desviación típica GE
+desv.tip.GE <- sd(vector.GE)
+
+# cuasidesviación típica GE
+cuasidesv.tip.GE <- sqrt(cuasivar.GE)
+
+# coeficiente de variación GE
+coef.var.GE <- CalcularCoefVar(desv.tip.GE, media.GE)
+
+# MEDIDAS DE FORMA NEH
+
+# coeficiente de asimetría NEH
+coef.asim.NEH <- skewness(vector.NEH)
+
+# coeficiente de kurtosis NEH
+coef.kurt.NEH <- kurtosis(vector.NEH)
+
+# MEDIDAS DE FORMA GE
+
+# coeficiente de asimetría GE
+coef.asim.GE <- skewness(vector.GE)
+
+# coeficiente de kurtosis GE
+coef.kurt.GE <- kurtosis(vector.GE)
