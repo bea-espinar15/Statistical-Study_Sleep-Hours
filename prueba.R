@@ -305,7 +305,7 @@ interv <- c(0, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 500
 # obtenemos el data frame GE para representarlo
 df.GE <- data.frame(value = vector.GE)
   
-# histograma (f.a.) y polígono de frecuencias
+# histograma y polígono de frecuencias (f.a.)
 hist.GE <- ggplot(df.GE, aes(vector.GE)) + 
               geom_histogram(color = 1, fill = "#005c00",
                              breaks = intervalos) +
@@ -314,6 +314,13 @@ hist.GE <- ggplot(df.GE, aes(vector.GE)) +
               ylab("") +
               ggtitle("Histograma y polígono de frecuencias del gasto en educación por hogar") +
               xlim(c(0, 56000))
+
+# polígono de frecuencias (f.r.a)
+pol.fra.GE = ggplot(df.GE, aes(vector.GE)) + 
+              geom_step(stat = "ecdf", color = "#005c00") +
+              xlab("") + 
+              ylab("") +
+              ggtitle("Polígono de frecuencias f.r.a.")
 
 # TABLA DE FRECUENCIAS NEH Y GE
 
@@ -326,3 +333,14 @@ tabla.freq.rel.NEHyGE <- prop.table(tabla.freq.abs.NEHyGE)
 # añadimos marginales
 tabla.freq.abs.NEHyGE <- addmargins(tabla.freq.abs.NEHyGE)
 tabla.freq.rel.NEHyGE <- addmargins(tabla.freq.rel.NEHyGE)
+
+# DIAGRAMA DE DISPERSIÓN (NUBE DE PUNTOS)
+
+# obtenemos el data frame GE para representarlo
+df <- data.frame(NEH = vector.NEH, 
+                 GE = vector.GE)
+
+diag.disp <- ggplot(df, aes(x = NEH, y = GE)) +
+              geom_point(color = "#71c55b") +
+              xlab("") + 
+              ylab("")
