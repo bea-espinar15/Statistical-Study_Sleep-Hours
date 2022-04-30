@@ -8,6 +8,8 @@ install.packages("ggplot2")
 install.packages("fdth")
 install.packages("psych")
 install.packages("moments")
+install.packages("ggrepel")
+install.packages("tidyverse")
   
 # librerías
 library(dplyr)
@@ -16,6 +18,8 @@ library(ggplot2)
 library(fdth)
 library(psych)
 library(moments)
+library(ggrepel)
+library(tidyverse)
 
 # FUNCIONES
 
@@ -127,7 +131,7 @@ tabla.freq.NEH <- bind_cols(NEH.aux[1], freq.NEH.aux)
 # creamos intervalos y frecuencias abs
 vector.GE <- ObtenerVector(gasto.ed)
 intervalos <- c(0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000, 30000, 55000)
-intervalos.GE <- hist(vector.GE, breaks = intervalos, include.lowest = TRUE, right = TRUE, plot = TRUE)
+intervalos.GE <- hist(vector.GE, breaks = intervalos, include.lowest = TRUE, right = TRUE, plot = FALSE)
 intervalos.GE <- intervalos.GE[1:2]
 
 # metemos los datos en la tabla
@@ -244,3 +248,67 @@ coef.asim.GE <- skewness(vector.GE)
 
 # coeficiente de kurtosis GE
 coef.kurt.GE <- kurtosis(vector.GE)
+
+# GRÁFICOS NEH
+
+# obtenemos los vectores necesarios
+vector.fa.NEH <- ObtenerVector(tabla.freq.NEH[2])
+vector.fr.NEH <- ObtenerVector(tabla.freq.NEH[4])
+freq.rel.porc.NEH <- round(tabla.freq.NEH[4] * 100,2)
+vector.fr.porc.NEH <- ObtenerVector(freq.rel.porc.NEH[1])
+
+# obtenemos el data frame NEH para representarlo
+df.NEH <- data.frame(value = vector.fa.NEH,
+                     NEH = tabla.freq.NEH[1],
+                     rel = vector.fr.NEH,
+                     porcentaje = vector.fr.porc.NEH)
+
+# colores
+colores <- c("#005200", "#007000", "#258d19", "#71c55b", "#92e27a", "#b4ff9a")
+
+# diagrama de barras NEH
+ggplot(df.NEH, aes(x = NEH, y = value)) +
+                  geom_bar(stat = "identity", fill = "#005c00") +
+                  ggtitle("Diagrama de barras del número de estudiantes por hogar") +
+                  scale_x_discrete(limits = c("1", "2", "3", "4", "5", "6")) +
+                  geom_text(aes(label = value), vjust = -1, colour = "black") +
+                  ylim(c(0, 1500))
+
+
+# diagrama de sectores  NEH
+df.NEH <- df.NEH %>%
+        arrange(NEH) %>%
+        mutate(lab.ypos = cumsum(porcentaje) - porcentaje/2)
+
+df.NEH2 <- df.NEH %>% mutate(csum = rev(cumsum(rev(value))), 
+                        pos = value/2 + lead(csum, 1),
+                        pos = if_else(is.na(pos), value/2, pos))
+
+diag.sec.NEH <- ggplot(data = df.NEH, aes(x = "", y = value, fill = factor(NEH))) +
+                  geom_col(color = "black") +
+                  coord_polar(theta = "y", start = 0) +
+                  geom_label_repel(data = df.NEH2,
+                          aes(y = pos, label = paste0(porcentaje, "%")),
+                          size = 4, nudge_x = 1, show.legend = FALSE) +
+                  scale_fill_manual(values = colores) +
+                  guides(fill = guide_legend(title = "NEH")) +
+                  ggtitle("Diagrama de sectores del número de estudiantes por hogar") +
+                  theme_void()
+
+# GRÁFICOS GE
+
+# vector de intervalos para el gráfico
+interv <- c(0, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 55000)
+
+# obtenemos el data frame GE para representarlo
+df.GE <- data.frame(value = vector.GE)
+  
+# histograma frecuencias 
+hist.GE <- ggplot(df.GE, aes(x = value)) + 
+              geom_histogram(color = 1, fill = "#005c00",
+                             breaks = intervalos) +
+              scale_x_discrete(limits = interv) +
+              ggtitle("Histograma del gasto en educación por hogar")
+
+# polígono de frecuencias
+
