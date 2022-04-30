@@ -122,3 +122,9 @@ coef_var <- function(x, na.rm = FALSE) {
 }
 
 coef_var(x=w, na.rm=T)
+
+tabla.freq.NEHyGE <- datos %>% group_by(NEH, GE = cut(GE, breaks = intervalos)) %>% 
+  summarise(f.a. = n()) %>%
+  mutate(f.a.a. = cumsum(f.a.)) %>%
+  mutate(f.r. = f.a. / sum(f.a.)) %>%
+  mutate(f.r.a. = cumsum(f.r.))

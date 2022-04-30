@@ -34,7 +34,7 @@ ObtenerVector <- function(tib) {
 CrearIntervalos <- function(vec, tib) {
   interv <- c()
   for (i in 1:(length(vec) - 1))
-    interv <- c(interv, paste('(', vec[i], ', ', vec[i + 1], ']', sep = ''))
+    interv <- c(interv, paste('[', vec[i], ', ', vec[i + 1], ')', sep = ''))
   # metemos los intervalos en el tibble
   tib <- cbind(tib, 'GE' = interv)
   return(tib)
@@ -131,7 +131,7 @@ tabla.freq.NEH <- bind_cols(NEH.aux[1], freq.NEH.aux)
 # creamos intervalos y frecuencias abs
 vector.GE <- ObtenerVector(gasto.ed)
 intervalos <- c(0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000, 30000, 55000)
-intervalos.GE <- hist(vector.GE, breaks = intervalos, include.lowest = TRUE, right = TRUE, plot = FALSE)
+intervalos.GE <- hist(vector.GE, breaks = intervalos, include.lowest = TRUE, right = FALSE, plot = FALSE)
 intervalos.GE <- intervalos.GE[1:2]
 
 # metemos los datos en la tabla
@@ -219,7 +219,7 @@ coef.var.NEH <- CalcularCoefVar(desv.tip.NEH, media.NEH)
 # MEDIDAS DE DISPERSIÓN GE
 
 # varianza GE
-var.GE <- var
+var.GE <- var(vector.GE)
 
 # cuasivarianza GE
 cuasivar.GE <- CalcularCuasivar(var.GE)
@@ -267,8 +267,10 @@ df.NEH <- data.frame(value = vector.fa.NEH,
 colores <- c("#005200", "#007000", "#258d19", "#71c55b", "#92e27a", "#b4ff9a")
 
 # diagrama de barras NEH
-ggplot(df.NEH, aes(x = NEH, y = value)) +
+diag.bar.NEH <- ggplot(df.NEH, aes(x = NEH, y = value)) +
                   geom_bar(stat = "identity", fill = "#005c00") +
+                  xlab("") +
+                  ylab("") + 
                   ggtitle("Diagrama de barras del número de estudiantes por hogar") +
                   scale_x_discrete(limits = c("1", "2", "3", "4", "5", "6")) +
                   geom_text(aes(label = value), vjust = -1, colour = "black") +
@@ -303,12 +305,24 @@ interv <- c(0, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 500
 # obtenemos el data frame GE para representarlo
 df.GE <- data.frame(value = vector.GE)
   
-# histograma frecuencias 
-hist.GE <- ggplot(df.GE, aes(x = value)) + 
+# histograma (f.a.) y polígono de frecuencias
+hist.GE <- ggplot(df.GE, aes(vector.GE)) + 
               geom_histogram(color = 1, fill = "#005c00",
                              breaks = intervalos) +
-              scale_x_discrete(limits = interv) +
-              ggtitle("Histograma del gasto en educación por hogar")
+              geom_freqpoly(data = df.GE, breaks = intervalos, color = "red") + 
+              xlab("") +
+              ylab("") +
+              ggtitle("Histograma y polígono de frecuencias del gasto en educación por hogar") +
+              xlim(c(0, 56000))
 
-# polígono de frecuencias
+# TABLA DE FRECUENCIAS NEH Y GE
 
+# tabla de frecuencias absolutas
+tabla.freq.abs.NEHyGE <- table(vector.NEH, vector.GE = cut(vector.GE, breaks = intervalos, right = FALSE))
+
+# tabla de frecuencias relativas
+tabla.freq.rel.NEHyGE <- prop.table(tabla.freq.abs.NEHyGE)
+
+# añadimos marginales
+tabla.freq.abs.NEHyGE <- addmargins(tabla.freq.abs.NEHyGE)
+tabla.freq.rel.NEHyGE <- addmargins(tabla.freq.rel.NEHyGE)
