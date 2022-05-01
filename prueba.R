@@ -81,25 +81,28 @@ CalcularCuasivar <- function(var) {
 # declaramos variable del dataframe
 datos <- fichero_salida
 
-# rm todas las col exc la 2 (ID), la 5 (NEH) y la 57 (GE) y las filas que sean NA
-datos <- datos %>% select(2,5,57) %>% filter(!is.na(EHOGAR) & !is.na(GTT))
+# rm todas las col exc la 2 (ID), la 4 (NPH), la 5 (NEH), la 57 (GE) y las filas que sean NA
+datos <- datos %>% select(2,4,5,57) %>% filter(!is.na(NHOGAR) & !is.na(EHOGAR) & !is.na(GTT))
+
+# pasamos NHOGAR de char a numeric
+datos$NPH <- as.numeric(datos$NHOGAR)
+datos <- datos %>% select(1,3,4,5)
 
 # pasamos EHOGAR de char a numeric
 datos$NEH <- as.numeric(datos$EHOGAR)
-datos <- datos %>% select(1,3,4)
+datos <- datos %>% select(1,3,4,5)
 
 # rehacemos el fichero con los gastos totales por hogar 
 # (viene una entrada por cada estudiante)
-datos <- datos %>% group_by(IDHOGAR, NEH) %>% summarise(GE = sum(GTT))
-datos <- datos %>% ungroup() %>% select(2, 3)
+datos.NEHyGE <- datos %>% group_by(IDHOGAR, NEH) %>% summarise(GE = sum(GTT))
+datos.NEHyGE <- datos.NEHyGE %>% ungroup() %>% select(2, 3)
 
 # separamos en dos variables
-num.est.hogar <- datos %>% select(1)
-gasto.ed <- datos %>% select(2)
+num.est.hogar <- datos.NEHyGE %>% select(1)
+gasto.ed <- datos.NEHyGE %>% select(2)
 
 # número de datos del fichero
-n.total <- count(datos)
-
+n.total <- count(datos.NEHyGE)
 
 # TABLA DE FRECUENCIAS DE NUM.EST.HOGAR
 
@@ -334,13 +337,60 @@ tabla.freq.rel.NEHyGE <- prop.table(tabla.freq.abs.NEHyGE)
 tabla.freq.abs.NEHyGE <- addmargins(tabla.freq.abs.NEHyGE)
 tabla.freq.rel.NEHyGE <- addmargins(tabla.freq.rel.NEHyGE)
 
-# DIAGRAMA DE DISPERSIÓN (NUBE DE PUNTOS)
+# DIAGRAMA DE DISPERSIÓN NEH Y GE (NUBE DE PUNTOS)
 
-# obtenemos el data frame GE para representarlo
-df <- data.frame(NEH = vector.NEH, 
+# obtenemos el data frame para representarlo
+df.NEHyGE <- data.frame(NEH = vector.NEH, 
                  GE = vector.GE)
 
-diag.disp <- ggplot(df, aes(x = NEH, y = GE)) +
-              geom_point(color = "#71c55b") +
-              xlab("") + 
-              ylab("")
+diag.disp.NEHyGE <- ggplot(df.NEHyGE, aes(x = NEH, y = GE)) +
+                      geom_point(color = "#71c55b") +
+                      xlab("") + 
+                      ylab("")
+
+# parece que no tienen una relación lineal, calculamos coef correlación
+coef.cor.NEHyGE <- cor(vector.NEH, vector.GE)
+
+# NUEVA VARIABLE (REGRESIÓN)
+
+# tomamos una nueva variable: número de personas por hogar
+datos.NPHyNEHI <- datos %>% select(1,3,4)
+datos.NPHyNEHI <- datos.NPHyNEHI %>% group_by(IDHOGAR)
+datos.NPHyNEHI <- datos.NPHyNEHI %>% ungroup() %>% select(2, 3)
+
+# separamos variables
+num.per.hogar <- datos.NPHyNEHI %>% select(1)
+num.est.hogar.ind <- datos.NPHyNEHI %>% select(2)
+
+# pasamos a tibble
+num.per.hogar <- as_tibble(num.per.hogar)
+num.est.hogar.ind <- as_tibble(num.est.hogar.ind)
+
+# calculamos vectores necesarios
+vector.NPH <- ObtenerVector(num.per.hogar[1])
+vector.NEHI <- ObtenerVector(num.est.hogar.ind[1])
+
+# TABLA DE FRECUENCIAS NPH Y NEHI
+
+# tabla de frecuencias absolutas
+tabla.freq.abs.NPHyNEHI <- table(vector.NPH, vector.NEHI)
+
+# tabla de frecuencias relativas
+tabla.freq.rel.NPHyNEHI <- prop.table(tabla.freq.abs.NPHyNEHI)
+
+# añadimos marginales
+tabla.freq.abs.NPHyNEHI <- addmargins(tabla.freq.abs.NPHyNEHI)
+tabla.freq.rel.NPHyNEHI <- addmargins(tabla.freq.rel.NPHyNEHI)
+
+# DIAGRAMA DE DISPERSIÓN NPH Y NEHI (NUBE DE PUNTOS)
+
+# obtenemos el data frame para representarlo
+df.NPHyNEHI <- data.frame(NPH = vector.NPH, 
+                          NEHI = vector.NEHI)
+
+diag.disp.NPHyNEHI <- ggplot(df.NPHyNEHI, aes(x = NPH, y = NEHI)) +
+  geom_point(color = "#71c55b") +
+  xlab("") + 
+  ylab("") +
+  ylim(c(0, 7)) +
+  ggtitle("Diagrama de dispersión Nº personas por hogar y Nº estudiantes por hogar")

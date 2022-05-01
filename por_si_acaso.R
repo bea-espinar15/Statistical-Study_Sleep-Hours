@@ -128,3 +128,121 @@ tabla.freq.NEHyGE <- datos %>% group_by(NEH, GE = cut(GE, breaks = intervalos)) 
   mutate(f.a.a. = cumsum(f.a.)) %>%
   mutate(f.r. = f.a. / sum(f.a.)) %>%
   mutate(f.r.a. = cumsum(f.r.))
+
+# pasamos EDAD de char a numeric
+datos$ED <- as.numeric(datos$EDAD)
+datos <- datos %>% select(1,3,4,5)
+
+# ------------------------------------------------------------------------------------------
+
+# EDAD Y C09A (COMEDOR)
+
+datos_aux <- fichero_salida
+datos_aux <- datos_aux %>% select(7,19) %>% filter(!is.na(EDAD) & !is.na(C09A))
+
+datos_aux$ED <- as.numeric(datos_aux$EDAD)
+datos_aux <- datos_aux %>% select(2,3)
+
+datos_aux$NPH <- as.numeric(datos_aux$NHOGAR)
+datos_aux <- datos_aux %>% select(2,3)
+
+var1 <- datos_aux %>% select(1)
+var2 <- datos_aux %>% select(2)
+
+var1 <- as_tibble(var1)
+var2 <- as_tibble(var2)
+
+vector1 <- ObtenerVector(var1[1])
+vector2 <- ObtenerVector(var2[1])
+
+df <- data.frame(var1 = vector1, 
+                 var2 = vector2)
+
+ggplot(df, aes(x = var2, y = var1)) +
+  geom_point(color = "#71c55b") +
+  xlab("") + 
+  ylab("")
+
+cor(vector2, vector1)
+
+# ------------------------------------------------------------------------------------------
+
+# EHOGAR Y D48 (papeleria)
+
+datos_aux <- fichero_salida
+datos_aux <- datos_aux %>% select(5,50) %>% filter(!is.na(EHOGAR) & !is.na(D48))
+
+datos_aux$NEH <- as.numeric(datos_aux$EHOGAR)
+datos_aux <- datos_aux %>% select(2,3)
+
+datos_aux$NPH <- as.numeric(datos_aux$NHOGAR)
+datos_aux <- datos_aux %>% select(2,3)
+
+var1 <- datos_aux %>% select(1)
+var2 <- datos_aux %>% select(2)
+
+var1 <- as_tibble(var1)
+var2 <- as_tibble(var2)
+
+vector1 <- ObtenerVector(var1[1])
+vector2 <- ObtenerVector(var2[1])
+
+df <- data.frame(var1 = vector1, 
+                 var2 = vector2)
+
+ggplot(df, aes(x = var2, y = var1)) +
+  geom_point(color = "#71c55b") +
+  xlab("") + 
+  ylab("")
+
+cor(vector2, vector1)
+
+# elegimos una nueva variable: Gasto en libros
+datos.GLyGEI <- datos %>% select(2,3)
+
+# separamos las variables
+gasto.lib <- datos.GLyGEI %>% select(1)
+gasto.ed.ind <- datos.GLyGEI %>% select(2)
+gasto.ed.ind$GEI <- gasto.ed.ind$GTT
+gasto.ed.ind <- gasto.ed.ind %>% select(2)
+
+# pasamos a tibble
+gasto.lib <- as_tibble(gasto.lib)
+gasto.ed.ind <- as_tibble(gasto.ed.ind)
+
+# obtenemos los vectores necesarios y los data frames
+vector.GL <- ObtenerVector(gasto.lib[1])
+vector.GEI <- ObtenerVector(gasto.ed.ind[1])
+
+# TABLA DE FRECUENCIAS GL Y GEI
+
+# vemos qué intervalos son representativos para GL
+intervalos2 <- c(0, 100, 200, 300, 400, 500, 600, 2200)
+intervalos.GL <- hist(vector.GL, breaks = intervalos2, include.lowest = TRUE, right = FALSE, plot = TRUE)
+
+# vemos qué intervalos son representativos para GEI
+intervalos3 <- c(0, 1000, 2000, 3000, 4000, 5000, 10000, 20000, 50000)
+intervalos.GEI <- hist(vector.GEI, breaks = intervalos3, include.lowest = TRUE, right = FALSE, plot = FALSE)
+
+# tabla de frecuencias absolutas
+tabla.freq.abs.GLyGEI <- table(vector.GL = cut(vector.GL, breaks = intervalos2, right = FALSE), vector.GEI = cut(vector.GEI, breaks = intervalos3, right = FALSE))
+
+# tabla de frecuencias relativas
+tabla.freq.rel.GLyGEI <- prop.table(tabla.freq.abs.GLyGEI)
+
+# añadimos marginales
+tabla.freq.abs.GLyGEI <- addmargins(tabla.freq.abs.GLyGEI)
+tabla.freq.rel.GLyGEI <- addmargins(tabla.freq.rel.GLyGEI)
+
+# DIAGRAMA DE DISPERSIÓN GL Y GEI (NUBE DE PUNTOS)
+
+# obtenemos el data frame para representarlo
+df.GLyGEI <- data.frame(GL = vector.GL, 
+                        GEI = vector.GEI)
+
+diag.disp.GLyGEI <- ggplot(df.GLyGEI, aes(x = GL, y = GEI)) +
+  geom_point(color = "#71c55b") +
+  xlab("") + 
+  ylab("")
+
+cor(vector.GL, vector.GEI)
