@@ -104,6 +104,11 @@ gasto.ed <- datos.NEHyGE %>% select(2)
 # número de datos del fichero
 n.total <- count(datos.NEHyGE)
 
+
+# T1: ESTADÍSTICA DESCRIPTIVA
+# ---------------------------
+
+
 # TABLA DE FRECUENCIAS DE NUM.EST.HOGAR
 
 # frecuencias abs
@@ -394,3 +399,49 @@ diag.disp.NPHyNEHI <- ggplot(df.NPHyNEHI, aes(x = NPH, y = NEHI)) +
   ylab("") +
   ylim(c(0, 7)) +
   ggtitle("Diagrama de dispersión Nº personas por hogar y Nº estudiantes por hogar")
+
+# REGRESIÓN NPH Y NEHI
+
+reg.NPHyNEHI <- lm(vector.NPH~vector.NEHI, data = df.NPHyNEHI)
+reg.NPHyNEHI <- summary(reg.NPHyNEHI)
+
+# guardamos resultados
+a.NPHyNEHI <- 2.38759
+b.NPHyNEHI <- 0.66514
+
+# utilizamos regresión para predecir:
+# y = 2.38759 + 0.66514x
+
+# si viven 8 personas en un hogar, ¿cuántos serán estudiantes?
+res <- a.NPHyNEHI + b.NPHyNEHI * 8
+
+# covarianza
+cov.NPHyNEHI <- cov(vector.NPH, vector.NEHI)
+
+# coeficiente correlación lineal
+coef.cor.NPHyNEHI <- cor(vector.NPH, vector.NEHI)
+
+# coeficiente determinación
+coef.det.NPHyNEHI <- coef.cor.NPHyNEHI ^ 2
+
+
+
+# T2: PROBABILIDAD
+# ----------------
+
+
+# P(GE >= 1000) - Salario mínimo
+c.fav.1 <- count(df.GE %>% filter(value >= 1000))
+c.pos.1 <- count(df.GE)
+prob.1 <- c.fav.1 / c.pos.1
+
+# P(GE >= 12000) - Salario mínimo x12
+c.fav.2 <- count(df.GE %>% filter(value >= 12000))
+c.pos.2 <- count(df.GE)
+prob.2 <- c.fav.2 / c.pos.2
+
+# Dada la muestra de NEH, P de que al coger 3 hogares (sin remp) tengan
+# 1,2 y 3 estudiantes
+c.fav.3 <- choose(vector.fa.NEH[1], 1) * choose(vector.fa.NEH[2], 1) * choose(vector.fa.NEH[3], 1)
+c.pos.3 <- choose(length(vector.NEH), 3)
+prob.3 <- c.fav.3 / c.pos.3
