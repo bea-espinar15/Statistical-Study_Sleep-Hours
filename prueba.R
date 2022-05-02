@@ -86,27 +86,27 @@ SumaNumCombinatorios <- function(v, k) {
 # calcula la probabilidad condicionada P(A/B), donde A = (1000 <= GE <= 2000), B = (NEH = i)
 ProbCondicionadaGE <- function(df1, df2, i) {
   # P(A n B)
-  c.fav.aux1 <- count(df1 %>% filter(NEH == i & GE >= 1000 & GE <= 2000))
-  c.pos.aux1 <- count(df1)
+  c.fav.aux1 <- as.numeric(count(df1 %>% filter(NEH == i & GE >= 1000 & GE <= 2000)))
+  c.pos.aux1 <- n.NEHyGE
   prob.aux1 <- c.fav.aux1 / c.pos.aux1
   # P(B)
-  c.fav.aux2 <- count(df2 %>% filter(NEH == i))
-  c.pos.aux2 <- count(df2)
+  c.fav.aux2 <- as.numeric(count(df2 %>% filter(NEH == i)))
+  c.pos.aux2 <- n.NEHyGE.NEH
   prob.aux2 <- c.fav.aux2 / c.pos.aux2
   # P(A/B)
   prob <- prob.aux1 / prob.aux2
-  return(as.numeric(prob))
+  return(prob)
 }
 
 # calcula la probabilidad condicionada P(A/B), donde A = (GL > media.GL), B = (NEH = 2)
 ProbCondicionadaGL <- function(df1, df2) {
   # P(A n B)
   c.fav.aux1 <- count(df1 %>% filter(NEH == 2 & GL > media.GL))
-  c.pos.aux1 <- count(df1)
+  c.pos.aux1 <- n.NEHyGL
   prob.aux1 <- c.fav.aux1 / c.pos.aux1
   # P(B)
   c.fav.aux2 <- count(df2 %>% filter(NEH == 2))
-  c.pos.aux2 <- count(df2)
+  c.pos.aux2 <- n.NEHyGL.NEH
   prob.aux2 <- c.fav.aux2 / c.pos.aux2
   # P(A/B)
   prob <- prob.aux1 / prob.aux2
@@ -114,6 +114,12 @@ ProbCondicionadaGL <- function(df1, df2) {
 }
 
 # calcula la probabilidad de que NEH = i
+ProbNEH <- function(df, i) {
+  c.fav <- as.numeric(count(df %>% filter(NEH == i)))
+  c.pos <- n.NEH
+  prob <- c.fav / c.pos
+  return(prob)
+}
 
 
 # --------------------------------------------------------------------------------
@@ -287,12 +293,18 @@ n.GE <- as.numeric(count(df.GE))
 
 # NEH Y GE (regresión fallida)
 n.NEHyGE <- as.numeric(count(df.NEHyGE))
+n.NEHyGE.NEH <- as.numeric(count(df.NEHyGE.NEH))
+n.NEHyGE.GE <- as.numeric(count(df.NEHyGE.GE))
 
 # NPH Y NEH (regresión)
 n.NPHyNEH <- as.numeric(count(df.NPHyNEH))
+n.NPHyNEH.NPH <- as.numeric(count(df.NPHyNEH.NPH))
+n.NPHyNEH.NEH <- as.numeric(count(df.NPHyNEH.NEH))
 
 # NEH Y GL (probabilidad)
 n.NEHyGL <- as.numeric(count(df.NEHyGL))
+n.NEHyGL.NEH <- as.numeric(count(df.NEHyGL.NEH))
+n.NEHyGL.GL <- as.numeric(count(df.NEHyGL.GL))
 
 
 
@@ -652,13 +664,16 @@ for  (i in 1:6)
 
 
 # NEH: variable discreta --> FUNCIÓN DE MASA
-
+func.mas.NEH <- function(x) {
+  return(prob.7[x])
+}
 
 # GE: variable continua --> FUNCIÓN DE DENSIDAD
 func.dens.GE <-  ggplot(df.GE, aes(x = GE)) +
                     geom_density(color = "#71c55b",
-                                 lwd = 1,
-                                 linetype = 1) +
+                                 fill = "#71c55b",
+                                 alpha = 0.25,
+                                 lwd = 1) +
                     xlab("Gasto en educación") +
                     ylab("Densidad") +
                     ggtitle("Función de densidad del gasto en educación por hogar")
