@@ -668,6 +668,17 @@ func.mas.NEH <- function(x) {
   return(prob.7[x])
 }
 
+# función de distribución
+func.dist.NEH <- function(x) {
+  sum <- 0
+  for (i in 1:x)
+    sum <- sum + func.mas.NEH(i)
+  return(sum)
+}
+
+qqnorm(vec.NEHyGL.GL)
+qqline(vec.NEHyGL.GL)
+shapiro.test(vec.NEHyGL.GL)
 # GE: variable continua --> FUNCIÓN DE DENSIDAD
 func.dens.GE <-  ggplot(df.GE, aes(x = GE)) +
                     geom_density(color = "#71c55b",
