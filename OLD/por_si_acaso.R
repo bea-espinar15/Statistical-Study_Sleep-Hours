@@ -389,3 +389,16 @@ datos.NEHyGL <- datos.NEHyGL %>% select(1,3,4)
 datos.NEHyGL <- datos.NEHyGL %>% group_by(IDHOGAR, NEH) %>% summarise(GL = sum(LIB))
 datos.NEHyGL <- datos.NEHyGL %>% ungroup() %>% select(2, 3)
 
+# PASO 1: Ejecutar MD_EGHE_2019.R para generar el dataframe "fichero_salida"
+# --------------------------------------------------------------------------
+
+# PASO 2: Incluimos las librerías necesarias
+# ------------------------------------------
+
+library(dplyr)
+
+# PASO 3: Manipulamos el dataframe para obtener las variables de estudio
+# ----------------------------------------------------------------------
+
+# Guardamos en una variable las columnas que nos interesan:
+datos <- fichero_salida %>% select(5,57) %>% filter(!is.na(EHOGAR) & !is.na(GTT))

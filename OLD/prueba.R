@@ -10,6 +10,7 @@ install.packages("psych")
 install.packages("moments")
 install.packages("ggrepel")
 install.packages("tidyverse")
+#install.packages("car")
   
 # librerías
 library(dplyr)
@@ -20,6 +21,7 @@ library(psych)
 library(moments)
 library(ggrepel)
 library(tidyverse)
+#library(car)
 
 # FUNCIONES
 
@@ -164,6 +166,12 @@ df.GE <- df.GE %>% group_by(IDHOGAR) %>% summarise(GE = sum(GTT))
 df.GE <- df.GE %>% ungroup() %>% select(2)
 
 
+# GA
+
+# nos quedamos con la col 23 y eliminamos las filas que sean NA
+df.GA <- datos %>% select(23) %>% filter(!is.na(C13A))
+
+
 # cogemos los dataframes de las variables que nos interesan juntas
 
 
@@ -237,6 +245,9 @@ tib.NEH <- as_tibble(df.NEH)
 # GE
 tib.GE <- as_tibble(df.GE)
 
+# GA
+tib.GA <- as_tibble(df.GA)
+
 
 # obtenemos los tibbles de las variables que nos interesan juntas
 
@@ -263,6 +274,9 @@ vec.NEH <- ObtenerVector(tib.NEH[1])
 
 # GE
 vec.GE <- ObtenerVector(tib.GE[1])
+
+# GA
+vec.GA <- ObtenerVector(tib.GA[1])
 
 
 # obtenemos los vectores de las variables que nos interesan juntas
@@ -676,9 +690,6 @@ func.dist.NEH <- function(x) {
   return(sum)
 }
 
-qqnorm(vec.NEHyGL.GL)
-qqline(vec.NEHyGL.GL)
-shapiro.test(vec.NEHyGL.GL)
 # GE: variable continua --> FUNCIÓN DE DENSIDAD
 func.dens.GE <-  ggplot(df.GE, aes(x = GE)) +
                     geom_density(color = "#71c55b",
@@ -688,4 +699,15 @@ func.dens.GE <-  ggplot(df.GE, aes(x = GE)) +
                     xlab("Gasto en educación") +
                     ylab("Densidad") +
                     ggtitle("Función de densidad del gasto en educación por hogar")
+
+
+qqnorm(vec.GE)
+qqline(vec.GE)
+shapiro.test(vec.GE)
+
+qqnorm(vec.GA)
+qqline(vec.GA)
+shapiro.test(vec.GA)
+
+car::qqplot(vec.GE)
 
