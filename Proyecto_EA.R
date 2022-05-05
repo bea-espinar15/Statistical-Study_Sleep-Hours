@@ -239,3 +239,27 @@ pol.fra.HS = ggplot(df.HS, aes(vec.HS)) +
   xlab("") + 
   ylab("") +
   ggtitle("Polígono de frecuencias f.r.a.")
+
+# PASO 6: Aplicamos la estadística descriptiva para analizar las variables HS y CS
+# --------------------------------------------------------------------------------
+
+  # 6.1. Calculamos la tabla de frecuencias
+  # ---------------------------------------
+
+# tabla de frecuencias absolutas
+# creamos los intervalos para la calidad del sueño
+interv.CS <- hist(vec.CS, breaks = 'Sturges', include.lowest = TRUE, right = FALSE, plot = FALSE)
+vec.interv.CS 
+tabla.freq.abs.HSyCS <- table(vec.HS = cut(vec.HS, breaks = vec.interv.HS, right = FALSE))
+
+
+
+# tabla de frecuencias absolutas
+tabla.freq.abs.NEHyGE <- table(vec.NEHyGE.NEH, vec.NEHyGE.GE = cut(vec.NEHyGE.GE, breaks = intervalos, right = FALSE))
+
+# tabla de frecuencias relativas
+tabla.freq.rel.NEHyGE <- prop.table(tabla.freq.abs.NEHyGE)
+
+# añadimos marginales
+tabla.freq.abs.NEHyGE <- addmargins(tabla.freq.abs.NEHyGE)
+tabla.freq.rel.NEHyGE <- addmargins(tabla.freq.rel.NEHyGE)
