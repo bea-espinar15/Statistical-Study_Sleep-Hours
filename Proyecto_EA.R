@@ -100,7 +100,7 @@ datos <- read_delim("sleepdata_2.csv",
 
 # PASO 4: Nos quedamos con las variables de estudio, eliminando valores nulos
 # -----------------------------------------------------------------------------------
-
+ 
 # HORAS DE SUEÑO y CALIDAD DEL SUEÑO
 
 # guardamos la variable como tibble
