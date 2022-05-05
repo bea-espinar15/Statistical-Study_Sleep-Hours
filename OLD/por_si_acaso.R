@@ -402,3 +402,14 @@ library(dplyr)
 
 # Guardamos en una variable las columnas que nos interesan:
 datos <- fichero_salida %>% select(5,57) %>% filter(!is.na(EHOGAR) & !is.na(GTT))
+
+aux <- df.HS %>% filter(HS >= 1 & HS < 12)
+ks.test(x = aux$HS, "pnorm", media.HS, desv.tip.HS)
+
+lillie.test(x = aux$HS)
+
+ks.test(x = df.HC$HC, "pnorm", media.HC, desv.tip.HC)
+
+# calculamos su función de densidad acumulada ahora que la asemejamos a una distribución normal
+func.dens.acc.HS <- pnorm(7, media.HS, desv.tip.HS)
+plot(func.dens.acc.HS, main = "Función de distribución acumulada")
