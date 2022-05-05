@@ -757,8 +757,6 @@ diag.cuant.norm.HS.2 <- ggplot(df.HS.2, aes(sample = HS)) +
   ylab("") +
   ggtitle("Gráfico cuantil-cuantil horas de sueño (corregido)")
 # ahora sí, podemos comprobarlo con el test Lilliefors (si p > 0.5 se asemeja a una normal)
-lillie.test(x = df.HS.2$HS)
+test.norm.HS <- lillie.test(x = df.HS.2$HS)
 # p-value = 0.094 > 0.05
 
-
-  
