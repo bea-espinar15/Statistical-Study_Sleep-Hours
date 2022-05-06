@@ -910,7 +910,7 @@ est.cont.2 <- 1.0778
 # PASO 16: Mostramos todos los resultados obtenidos
 # -------------------------------------------------
 
-# Tamaño de la muesta
+# Tamaño de la muestra
 n
 
 
