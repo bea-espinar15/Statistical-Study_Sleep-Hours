@@ -15,11 +15,23 @@
 #####################################################################################
 
 
+#####################################################################################
+# 
+#  ¡¡IMPORTANTE!!
+#
+#  Ejecutar en primer lugar los pasos 1-15 (líneas 31-919). Esto realizará el análisis
+#  completo de los datos. Una vez se hayan terminado de ejecutar todos los comandos,
+#  se incluyen en el paso 16 todos los resultados obtenidos, para poder visualizar
+#  los que interesen. Para obtener un resultado, ejecutar el comando que aparece
+#  debajo del comentario correspondiente que describe dicho resultado.
+#
+#####################################################################################
+
+
 # PASO 1: Importamos las librerías necesarias
 # -------------------------------------------
 
-# Si no tenemos instalados los packages
-# instalar packages
+# SOLO EJECUTAR SI NO ESTÁN INSTALADOS LOS PACKAGES
 install.packages("dplyr")
 install.packages("janitor")
 install.packages("ggplot2")
