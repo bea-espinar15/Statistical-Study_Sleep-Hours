@@ -52,7 +52,7 @@ ObtenerVector <- function(tib) {
   return(vec)
 }
 
-# Añade a un tibble una columna con los intervalos indicados
+# añade a un tibble una columna con los intervalos indicados
 CrearIntervalosHC <- function(vec, tib, nom) {
   interv <- c()
   for (i in 1:(length(vec) - 1))
@@ -62,7 +62,7 @@ CrearIntervalosHC <- function(vec, tib, nom) {
   return(tib)
 }
 
-# Añade a un tibble una columna con los intervalos indicados
+# añade a un tibble una columna con los intervalos indicados
 CrearIntervalosHS <- function(vec, tib, nom) {
   interv <- c()
   for (i in 1:(length(vec) - 1))
@@ -72,7 +72,7 @@ CrearIntervalosHS <- function(vec, tib, nom) {
   return(tib)
 }
 
-# Añade a un tibble una columna con los intervalos indicados
+# añade a un tibble una columna con los intervalos indicados
 CrearIntervalosTA <- function(vec, tib, nom) {
   interv <- c()
   for (i in 1:(length(vec) - 1))
