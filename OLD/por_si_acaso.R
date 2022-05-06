@@ -413,3 +413,6 @@ ks.test(x = df.HC$HC, "pnorm", media.HC, desv.tip.HC)
 # calculamos su función de densidad acumulada ahora que la asemejamos a una distribución normal
 func.dens.acc.HS <- pnorm(7, media.HS, desv.tip.HS)
 plot(func.dens.acc.HS, main = "Función de distribución acumulada")
+
+f <- pnorm(df.HS$HS)
+plot(df.HS$HS, f, main = "Función de distribución acumulada")

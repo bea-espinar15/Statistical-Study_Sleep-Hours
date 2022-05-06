@@ -565,18 +565,26 @@ diag.disp.HCyHS <- ggplot(df.HCyHS, aes(x = HC, y = HS)) +
   # -----------------------------------
 
 # regresión lineal
-reg.HCyHS <- lm(vec.HC~vec.HS, data = df.HCyHS)
-reg.HCyHS <- summary(reg.HCyHS)
+res.reg.HCyHS <- lm(vec.HC~vec.HS, data = df.HCyHS)
+res.reg.HCyHS <- summary(res.reg.HCyHS)
 
 # guardamos resultados
 a.HCyHS <- 1.86645
 b.HCyHS <- 0.86926
 
-# utilizamos regresión para predecir:
-# y = 1.86645 + 0.86926x
+# función de la regresión y = 1.86645 + 0.86926x
+func.reg.HCyHS <- function(x) {
+  return(a.HCyHS + b.HCyHS * x)
+}
+# la representamos
+reg.HCyHS <- a.HCyHS + b.HCyHS * x
+rep.reg.HCyHS <- plot(x, reg.HCyHS, xlim = c(0,13), ylim = c(0,13), col = "#258d19", 
+                      xlab = "Horas en la cama", ylab = "Horas de sueño", type = "l", lwd = 2, 
+                      main = "Función de regresión de las horas en la cama y las horas de sueño")
 
+# utilizamos regresión para predecir:
 # si estás acostado durante 10 horas, ¿cuántas horas de sueño efectiva tendrás?
-res1 <- a.HCyHS + b.HCyHS * 10
+res1 <- func.reg.HCyHS(10)
 
 # covarianza
 cov.HCyHS <- cov(vec.HC, vec.HS)
@@ -617,18 +625,26 @@ diag.disp.HSyTA <- ggplot(df.HSyTA, aes(x = TA, y = HS)) +
   # -----------------------------------
 
 # regresión lineal
-reg.HSyTA <- lm(vec.HS~vec.TA, data = df.HSyTA)
-reg.HSyTA <- summary(reg.HSyTA)
+res.reg.HSyTA <- lm(vec.HS~vec.TA, data = df.HSyTA)
+res.reg.HSyTA <- summary(res.reg.HSyTA)
 
 # guardamos resultados
 a.HSyTA <- 6.747164
 b.HSyTA <- -0.006275
 
-# utilizamos regresión para predecir:
-# y = 6.747164 - 0.006275x
+# función de regresión y = 6.747164 - 0.006275x
+func.reg.HSyTA <- function(x) {
+  return(a.HSyTA + b.HSyTA * x)
+}
+# la representamos
+reg.HSyTA <- a.HSyTA + b.HSyTA * x
+rep.reg.HSyTA <- plot(x, reg.HSyTA, xlim = c(0,100), ylim = c(0,13), col = "#258d19", 
+                      xlab = "Tiempo antes de dormir", ylab = "Horas de sueño", type = "l", lwd = 2, 
+                      main = "Función de regresión del tiempo antes de dormir y las horas de sueño")
 
+# utilizamos regresión para predecir:
 # si tardas 15 min en dormirte, ¿cuántas horas dormirás?
-res2 <- a.HSyTA + b.HSyTA * 15
+res2 <- func.reg.HSyTA(15)
 
 # covarianza
 cov.HSyTA <- cov(vec.HS, vec.TA)
@@ -670,18 +686,26 @@ diag.disp.TAyCS <- ggplot(df.TAyCS, aes(x = TA, y = CS)) +
   # ------------------------------------
 
 # regresión lineal
-reg.TAyCS <- lm(vec.TA~vec.CS, data = df.TAyCS)
-reg.TAyCS <- summary(reg.TAyCS)
+res.reg.TAyCS <- lm(vec.TA~vec.CS, data = df.TAyCS)
+res.reg.TAyCS <- summary(res.reg.TAyCS)
 
 # guardamos resultados
 a.TAyCS <- 65.08125
 b.TAyCS <- -0.55875
 
-# utilizamos regresión para predecir:
-# y = 65.08125 - 0.55875x
+# función de regresión y = 65.08125 - 0.55875x
+func.reg.TAyCS <- function(x) {
+  return(a.TAyCS + b.TAyCS * x)
+}
+# la representamos
+reg.TAyCS <- a.TAyCS + b.TAyCS * x
+rep.reg.TAyCS <- plot(x, reg.TAyCS, xlim = c(0,100), ylim = c(0,100), col = "#258d19", 
+                      xlab = "Tiempo antes de dormir", ylab = "Calidad del sueño", type = "l", lwd = 2, 
+                      main = "Función de regresión del tiempo antes de dormir y la calidad del sueño")
 
+# utilizamos regresión para predecir:
 # si tardas 15 min en dormirte, ¿cuál será tu calidad del sueño?
-res3 <- a.TAyCS + b.TAyCS * 15
+res3 <- func.reg.TAyCS(15)
 
 # covarianza
 cov.TAyCS <- cov(vec.TA, vec.CS)
@@ -701,48 +725,57 @@ c.fav.1 <- as.numeric(count(df.TA %>% filter(TA < 10)))
 c.pos.1 <- n
 prob.1 <- c.fav.1 / c.pos.1
 
-  # P(HS >= 7) -> Dormir más de las horas mínimas recomendadas para cualquier edad
-c.fav.2 <- as.numeric(count(df.HC %>% filter(HC >= 7)))
+  # P(TA > 15)
+c.fav.2 <- as.numeric(count(df.TA %>% filter(TA > 15)))
 c.pos.2 <- n
 prob.2 <- c.fav.2 / c.pos.2
 
-  # P(HS < 7 n CS > 60)
-c.fav.3 <- as.numeric(count(df.HSyCS %>% filter(HS < 7 & CS > 60)))
+  # P(HS >= 7) -> Dormir más de las horas mínimas recomendadas para cualquier edad
+c.fav.3 <- as.numeric(count(df.HC %>% filter(HC >= 7)))
 c.pos.3 <- n
 prob.3 <- c.fav.3 / c.pos.3
 
-  # P(TA > 45 n CS > 70)
-c.fav.4 <- as.numeric(count(df.TAyCS %>% filter(TA > 45 & CS > 70)))
+  # P(HS < 7 n CS > 60)
+c.fav.4 <- as.numeric(count(df.HSyCS %>% filter(HS < 7 & CS > 60)))
 c.pos.4 <- n
 prob.4 <- c.fav.4 / c.pos.4
 
+  # P(TA > 45 n CS > 70)
+c.fav.5 <- as.numeric(count(df.TAyCS %>% filter(TA > 45 & CS > 70)))
+c.pos.5 <- n
+prob.5 <- c.fav.5 / c.pos.5
+
   # P(HS >= 7 | HC >= 9)
-prob.5 <- ProbCondicionadaHCyHS(df.HCyHS, df.HC)
+prob.6 <- ProbCondicionadaHCyHS(df.HCyHS, df.HC)
 
   # P(HS > 6 | TA > 30)
-prob.6 <- ProbCondicionadaHSyTA(df.HSyTA, df.TA)
+prob.7 <- ProbCondicionadaHSyTA(df.HSyTA, df.TA)
 
 
-# PASO 12: Calculamos función de densidad y comparamos con modelos de probabilidad
-# --------------------------------------------------------------------------------
+# PASO 12: Calculamos función de densidad y distribución de HS y comparamos con modelos de probabilidad
+# -----------------------------------------------------------------------------------------------------
 
 # HS: variable continua --> FUNCIÓN DE DENSIDAD
-func.dens.HS <-  ggplot(df.HS, aes(x = HS)) +
-  geom_density(color = "#71c55b",
-               fill = "#71c55b",
-               alpha = 0.25,
-               lwd = 1) +
-  xlab("Horas de sueño") +
-  ylab("Densidad") +
-  ggtitle("Función de densidad de las horas de sueño efectivo")
+func.dens.HS <- function(x) {
+  return(dnorm(x, media.HS, desv.tip.HS))
+}
+# representamos la función
+graf.func.dens.HS <-  ggplot(df.HS, aes(x = HS)) +
+                        geom_density(color = "#71c55b",
+                                     fill = "#71c55b",
+                                     alpha = 0.25,
+                                     lwd = 1) +
+                        xlab("Horas de sueño") +
+                        ylab("Densidad") +
+                        ggtitle("Función de densidad de las horas de sueño efectivo")
 
 # comparamos con una distribución normal
 diag.cuant.norm.HS <- ggplot(df.HS, aes(sample = HS)) + 
-  stat_qq(color = "#71c55b") + 
-  stat_qq_line(color = "#005c00", lwd = 0.8) +
-  xlab("") + 
-  ylab("") +
-  ggtitle("Gráfico cuantil-cuantil horas de sueño")
+                        stat_qq(color = "#71c55b") + 
+                        stat_qq_line(color = "#005c00", lwd = 0.8) +
+                        xlab("") + 
+                        ylab("") +
+                        ggtitle("Gráfico cuantil-cuantil horas de sueño")
 
 # se aproxima mucho a la recta, excepto por algunos valores atípicos
 # eliminamos esos valores extremos
@@ -751,12 +784,397 @@ tib.HS.2 <- as_tibble(df.HS.2)
 vec.HS.2 <- ObtenerVector(tib.HS.2[1])
 # volvemos a comparar con una distribución normal
 diag.cuant.norm.HS.2 <- ggplot(df.HS.2, aes(sample = HS)) + 
-  stat_qq(color = "#71c55b") + 
-  stat_qq_line(color = "#005c00", lwd = 0.8) +
-  xlab("") + 
-  ylab("") +
-  ggtitle("Gráfico cuantil-cuantil horas de sueño (corregido)")
+                          stat_qq(color = "#71c55b") + 
+                          stat_qq_line(color = "#005c00", lwd = 0.8) +
+                          xlab("") + 
+                          ylab("") +
+                          ggtitle("Gráfico cuantil-cuantil horas de sueño (corregido)")
 # ahora sí, podemos comprobarlo con el test Lilliefors (si p > 0.5 se asemeja a una normal)
 test.norm.HS <- lillie.test(x = df.HS.2$HS)
 # p-value = 0.094 > 0.05
 
+# una vez que hemos visto que los datos siguen distribución normal, podemos calcular la función de distribución
+# P(X <= x), siendo X ~ N(media.HS, desv.tip.HS)
+func.dist.HS <- function(x) {
+  # tipificamos para tener N(0, 1)
+  x <- (x - media.HS) / desv.tip.HS
+  return(pnorm(x))
+  # otra manera de calcularlo:
+  # return(pnorm(x, mean =  media.HS, sd = desv.tip.HS))
+}
+
+# representamos la función
+f_aux <- pnorm((x - media.HS) / desv.tip.HS)
+graf.func.dist.HS <- plot(x, f_aux, xlim = c(0,13), col = "#258d19", xlab = "Horas de sueño", ylab = "Probabilidad", 
+                          type = "o", main = "Función de distribución de las horas de sueño efectivo")
+  
+
+# PASO 13: Calculamos probabilidades relevantes a partir de la función de distribución
+# ------------------------------------------------------------------------------------
+
+# P(HS > 6) = 1 - P(HS <= 6)
+prob.8 <- 1 - func.dist.HS(6)
+
+# P(6 < HS <= 8) = P(HS <= 8) - P(HS <= 6)
+prob.9 <- func.dist.HS(8) - func.dist.HS(6)
+
+# P(HS <= 4)
+prob.10 <- func.dist.HS(4)
+
+# P(HS > 10) = 1 - P(HS <= 10)
+prob.11 <- 1 - func.dist.HS(10)
+
+# P(HS > 7) = 1 - P(HS <= 7)
+prob.12 <- 1 - func.dist.HS(7)
+
+
+# PASO 14: Primer contraste de hipótesis
+# --------------------------------------
+
+# Queremos comprobar que la gente duerme en media menos de las 7 horas mínimas recomendadas con una confianza
+# del 95% (1 - α = 0.95)
+
+# DATOS: x_HS = media.HS
+#        s_HS = cuasidesv.tip.HS
+#        n_HS = n
+#        La desviación es desconocida
+
+# CONTRASTE
+# -----------
+# H0: µ >= 7
+# H1: µ < 7
+# -----------
+
+# contraste unilateral -> 1 - α
+
+# tomamos los datos
+x_HS <- media.HS
+s_HS <- cuasidesv.tip.HS
+n_HS <- n
+mu_HS <- 7
+# 1 - α = 0.95 => α = 0.05
+alpha <- 0.05
+
+# valor por defecto de 1 - α = 0.95
+res.cont.hip.1 <- t.test(vec.HS, mu = mu_HS, alternative = "less")
+
+est.cont.1 <- -9.6079
+
+# RESULTADOS
+# ----------
+# · Estadístico de contraste = -9.6079
+# · t € R.C. => rechazamos H0
+#
+# => Hay suficiente evidencia estadística para concluir que la media es menor que 7, tal y como queríamos comprobar
+
+
+# PASO 15: Segundo contraste de hipótesis
+# ---------------------------------------
+
+# Queremos comprobar que el número de horas que se está en la cama varía de la misma manera que el número de horas
+# que se duerme con una confianza del 90% (1 - α = 0.9)
+
+# DATOS: s2_HS = cuasivar.HS
+#        s2_HC = cuasivar.HC
+#        n_HSyHC = n
+
+# CONTRASTE
+# -------------
+# H0: σ1 <= σ2
+# H1: σ1 > σ2
+# -------------
+# donde σ1 = varianza poblacional de HS y σ2 = varianza poblacional de HC
+
+# contraste unilateral -> α
+
+# tomamos los datos
+s2_HS <- cuasivar.HS
+s2_HC <- cuasivar.HC
+n_HSyHC <- n
+# 1 - α = 0.95 => α = 0.1 => α/2 = 0.05
+alpha <- 0.1
+
+res.cont.hip.2 <- var.test(vec.HS, vec.HC, alternative = "greater", conf.level = 1 - alpha)
+
+est.cont.2 <- 1.0778
+
+# RESULTADOS
+# ----------
+# · Estadístico de contraste = 1.0778
+# · t € R.C. => rechazamos H0
+#
+# => Hay suficiente evidencia estadística para concluir que varía más el nº de horas de sueño que el nº de
+#    horas en la cama, tal y como queríamos comprobar
+
+
+# PASO 16: Mostramos todos los resultados obtenidos
+# -------------------------------------------------
+
+# Tamaño de la muesta
+n
+
+
+# Tabla de frecuencias de las horas en la cama
+tabla.freq.HC
+
+# Medidas de posición de las horas en la cama
+# Media
+media.HC
+# Mediana
+mediana.HC
+# Intervalo modal
+interv.modal.HC
+# Percentil 25%
+perc25.HC
+# Percentil 75%
+perc75.HC
+
+# Medidas de dispersión de las horas en la cama
+# Varianza
+var.HC
+# Cuasivarianza
+cuasivar.HC
+# Desviación típica
+desv.tip.HC
+# Cuasidesviación típica
+cuasidesv.tip.HC
+# Coeficiente de variación
+coef.var.HC
+
+# Medidas de forma de las horas en la cama
+# Coeficiente de asimetría
+coef.asim.HC
+# Coeficiente de kurtosis
+coef.kurt.HC
+
+# Histograma y polígono de frecuencias (f.a.) de las horas en la cama
+hist.HC
+
+# Polígono de f.r.a. de las horas en la cama
+pol.fra.HC
+
+
+# Tabla de frecuencias de las horas de sueño efectivo
+tabla.freq.HS
+
+# Medidas de posición de las horas de sueño efectivo
+# Media
+media.HS
+# Mediana
+mediana.HS
+# Intervalo modal
+interv.modal.HS
+# Percentil 25%
+perc25.HS
+# Percentil 75%
+perc75.HS
+
+# Medidas de dispersión de las horas de sueño efectivo
+# Varianza
+var.HS
+# Cuasivarianza
+cuasivar.HS
+# Desviación típica
+desv.tip.HS
+# Cuasidesviación típica
+cuasidesv.tip.HS
+# Coeficiente de variación
+coef.var.HS
+
+# Medidas de forma de las horas de sueño efectivo
+# Coeficiente de asimetría
+coef.asim.HS
+# Coeficiente de kurtosis
+coef.kurt.HS
+
+# Histograma y polígono de frecuencias (f.a.) de las horas de sueño efectivo
+hist.HS
+
+# Polígono de f.r.a. de las horas de sueño efectivo
+pol.fra.HS
+
+
+# Tabla de frecuencias del tiempo antes de dormir
+tabla.freq.TA
+
+# Medidas de posición del tiempo antes de dormir
+# Media
+media.TA
+# Mediana
+mediana.TA
+# Intervalo modal
+interv.modal.TA
+# Percentil 25%
+perc25.TA
+# Percentil 75%
+perc75.TA
+
+# Medidas de dispersión del tiempo antes de dormir
+# Varianza
+var.TA
+# Cuasivarianza
+cuasivar.TA
+# Desviación típica
+desv.tip.TA
+# Cuasidesviación típica
+cuasidesv.tip.TA
+# Coeficiente de variación
+coef.var.TA
+
+# Medidas de forma del tiempo antes de dormir
+# Coeficiente de asimetría
+coef.asim.TA
+# Coeficiente de kurtosis
+coef.kurt.TA
+
+# Histograma y polígono de frecuencias (f.a.) del tiempo antes de dormir
+hist.TA
+
+# Polígono de f.r.a. del tiempo antes de dormir
+pol.fra.TA
+
+
+# Tabla de frecuencias absolutas de las horas en la cama y las horas de sueño efectivo
+tabla.freq.abs.HCyHS
+
+# Tabla de frecuencias relativas de las horas en la cama y las horas de sueño efectivo
+tabla.freq.rel.HCyHS
+
+# Gráfico de dispersión de las horas en la cama y las horas de sueño efectivo
+diag.disp.HCyHS
+
+# Función de regresión de las horas en la cama y las horas de sueño efectivo
+plot(x, reg.HCyHS, xlim = c(0,13), ylim = c(0,13), col = "#258d19", 
+     xlab = "Horas en la cama", ylab = "Horas de sueño", type = "l", lwd = 2, 
+     main = "Función de regresión de las horas en la cama y las horas de sueño")
+
+# Si estás acostado durante 10 horas, ¿cuántas horas de sueño efectiva tendrás?
+print(paste(res1, "horas", sep = " "))
+
+# Covarianza de las horas en la cama y las horas de sueño efectivo
+cov.HCyHS
+
+# Coeficiente de correlación lineal de las horas en la cama y las horas de sueño efectivo
+coef.cor.HCyHS
+
+# Coeficiente de determinación de las horas en la cama y las horas de sueño efectivo
+coef.det.HCyHS
+
+
+# Tabla de frecuencias absolutas de las horas de sueño efectivo y el tiempo antes de dormir
+tabla.freq.abs.HSyTA
+
+# Tabla de frecuencias relativas de las horas de sueño efectivo y el tiempo antes de dormir
+tabla.freq.rel.HSyTA
+
+# Gráfico de dispersión de las horas de sueño efectivo y el tiempo antes de dormir
+diag.disp.HSyTA
+
+# Función de regresión de las horas de sueño efectivo y el tiempo antes de dormir
+plot(x, reg.HSyTA, xlim = c(0,100), ylim = c(0,13), col = "#258d19", 
+     xlab = "Tiempo antes de dormir", ylab = "Horas de sueño", type = "l", lwd = 2, 
+     main = "Función de regresión del tiempo antes de dormir y las horas de sueño")
+
+# Si tardas 15 min en dormirte, ¿cuántas horas dormirás?
+print(paste(res2, "horas", sep = " "))
+
+# Covarianza de las horas de sueño efectivo y el tiempo antes de dormir
+cov.HSyTA
+
+# Coeficiente de correlación lineal de las horas de sueño efectivo y el tiempo antes de dormir
+coef.cor.HSyTA
+
+# Coeficiente de determinación de las horas de sueño efectivo y el tiempo antes de dormir
+coef.det.HSyTA
+
+
+# Tabla de frecuencias absolutas del tiempo antes de dormir y la calidad del sueño
+tabla.freq.abs.TAyCS
+
+# Tabla de frecuencias relativas del tiempo antes de dormir y la calidad del sueño
+tabla.freq.rel.TAyCS
+
+# Gráfico de dispersión del tiempo antes de dormir y la calidad del sueño
+diag.disp.TAyCS
+
+# Función de regresión del tiempo antes de dormir y la calidad del sueño
+plot(x, reg.TAyCS, xlim = c(0,100), ylim = c(0,100), col = "#258d19", 
+     xlab = "Tiempo antes de dormir", ylab = "Calidad del sueño", type = "l", lwd = 2, 
+     main = "Función de regresión del tiempo antes de dormir y la calidad del sueño")
+
+# Si tardas 15 min en dormirte, ¿cuál será tu calidad del sueño?
+print(paste(res3, "%", sep = ""))
+
+# Covarianza del tiempo antes de dormir y la calidad del sueño
+cov.TAyCS
+
+# Coeficiente de correlación lineal del tiempo antes de dormir y la calidad del sueño
+coef.cor.TAyCS
+
+# Coeficiente de determinación del tiempo antes de dormir y la calidad del sueño
+coef.det.TAyCS
+
+
+# Probabilidad de que un individuo tarde en dormirse menos de 10 min
+prob.1
+
+# Probabilidad de que un individuo tarde en dormirse más de 15 min
+prob.2
+
+# Probabilidad de que un individuo duerma 7 horas o más
+prob.3
+
+# Probabilidad de que un individuo duerma menos de 7 horas y tenga una calidad del sueño superior al 60%
+prob.4
+
+# Probabilidad de que un individuo tarde más de 45 min en dormirse y su calidad del sueño sea superior al 70%
+prob.5
+
+# Probabilidad de que un individuo duerma 7 horas o más sabiendo que está en la cama 9 horas o más
+prob.6
+
+# Probabilidad de que un individuo duerma más de 6 horas sabiendo que ha tardado más de media hora en dormirse
+prob.7
+
+
+# Función de densidad de las horas de sueño efectivo
+graf.func.dens.HS
+
+# Diagrama de cuantiles de las horas de sueño efectivo (comparación con Dist. Normal)
+diag.cuant.norm.HS
+
+# Mismo diagrama que el anterior, con la corrección de valores atípicos
+diag.cuant.norm.HS.2
+
+# Función de distribución de las horas de sueño efectivo
+plot(x, f_aux, xlim = c(0,13), col = "#258d19", xlab = "Horas de sueño", ylab = "Probabilidad", 
+     type = "o", main = "Función de distribución de las horas de sueño efectivo")
+
+
+# Probabilidad de dormir más de 6 horas
+prob.8
+
+# Probabilidad de dormir entre 6 y 8 horas
+prob.9
+
+# Probabilidad de dormir 4 horas o menos
+prob.10
+
+# Probabilidad de dormir más de 10 horas
+prob.11
+
+# Probabilidad de dormir más de 7 horas
+prob.12
+
+
+# Resultados del primer contraste (media de HS < 7)
+# Estadístico de contraste
+est.cont.1
+# Conclusión
+print("Hay suficiente evidencia estadística para concluir que la media es menor que 7")
+
+# Resultados del segundo contraste (varianza de HS > varianza de HC)
+# Estadístico de contraste
+est.cont.2
+# Conclusión
+print("Hay suficiente evidencia estadística para concluir que varía más el nº de horas de sueño que el nº de horas en la cama")
