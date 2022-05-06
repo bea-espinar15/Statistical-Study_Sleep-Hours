@@ -1165,7 +1165,7 @@ prob.11
 
 # Probabilidad de dormir más de 7 horas
 prob.12
-
+ 
 
 # Resultados del primer contraste (media de HS < 7)
 # Estadístico de contraste
